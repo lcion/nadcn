@@ -1,0 +1,7 @@
+Network Administrator of Distributed Computer Networks
+
+This application is used when a user needs to monitor multiple computers running on a local network.
+
+The small server (slave) applications are running on the network computers that are required to be monitored. One server instance will be run on each workstation on the network.
+
+The client (Multi Master) application can connect to one or more server on the network, looking for status (ex disk usage) and sending commands (ex shutdown).
