@@ -4,6 +4,8 @@
 //				pe retea.
 //
 //
+#include <string.h>
+
 char *cryptl(char *, char *);
 //static long seed = 123;
 
@@ -62,14 +64,14 @@ char	t1[ROTORSZ];
 char	t2[ROTORSZ];
 char	t3[ROTORSZ];
 char	deck[ROTORSZ];
-char	buf[13], buf1[13];
+char	buf[13], buf1[14];
 	long seed;
 	register int i, n1, n2, nr1, nr2;
 	int secureflg = 1;
 	for(i = 0; i < ROTORSZ; i++){
 		t1[i] = t2[i] = t3[i] = deck[i] = 0;
 	}
-	strcpy(buf1, "*@d^_~#d%^7*a");
+	strcpy_s(buf1, 14, "*@d^_~#d%^7*a");
 	setup(buf1, t1, t2, t3, buf, deck, &seed);
 //	fprintf(stderr,"");
 	n1 = 0;

@@ -14,7 +14,7 @@ void fix_string(char *, int);
 void smsg(char *msg){
 int	n; 
 char buffer[MAXLINE], b1[MAXLINE+2];
-	strcpy(buffer, msg);
+	strcpy_s(buffer, MAXLINE, msg);
 	n = strlen(buffer);
 	fix_string(buffer, n);
 	b1[0] = n>>8;		//byte-ul cel mai semnificativ
@@ -37,7 +37,7 @@ char    buffer[MAXLINE];
 	if ( (rc = recv(fd, buffer, n, 0)) == n){
 		fix_string(buffer, n);	//decriptez
 		buffer[n]=0;		//pun terminator de sir
-		strcpy(ptr, buffer);
+		strcpy_s(ptr, maxlen, buffer);
 		return (n);
 	}
 	return(-1);	//eroare
@@ -45,22 +45,22 @@ char    buffer[MAXLINE];
 
 
 int is_command(char *brut, t_char *block){ //prelucreaza brut returnand 
-char *t;
-	strcpy(block->cv, "\0");
-	strcpy(block->ex, "\0");
-	t=strdup(brut);
+char *token, *nex_token;
+	strcpy_s(block->cv, MAXLINE, "\0");
+	strcpy_s(block->ex, MAXLINE, "\0");
+	token = _strdup(brut);
 	if((brut[0] == '.') && strlen(brut) >=2 ){
-		block->c=brut[1];
-		t=strtok(brut," \t");
-		t = strtok(NULL, " \t");
-		if(t != NULL){
-			strcpy(block->cv, t);
-			t = strtok(NULL, " \t");
-			while(t != NULL){
-				strcat(block->ex, t);
-				t = strtok(NULL, " \t");
-				if(t != NULL)
-					strcat(block->ex, " ");
+		block->c = brut[1];
+		token = strtok_s(brut, " \t", &nex_token);
+		token = strtok_s(NULL, " \t", &nex_token);
+		if(token != NULL){
+			strcpy_s(block->cv, MAXLINE, token);
+			token = strtok_s(NULL, " \t", &nex_token);
+			while(token != NULL){
+				strcat_s(block->ex, MAXLINE, token);
+				token = strtok_s(NULL, " \t", &nex_token);
+				if(token != NULL)
+					strcat_s(block->ex, MAXLINE, " ");
 			}
 		}
 		return 1;
@@ -77,13 +77,13 @@ unsigned long freeClust;
 unsigned long TotClust;
 int drive;
 char rpn[5], buf[MAXLINE];
-		strcpy(rpn, "C:\\");
+		strcpy_s(rpn, 5, "C:\\");
 		for( drive = 3; drive <= 26; drive++){
 			rpn[0] = 'A' + drive - 1;
 			if(GetDiskFreeSpace( rpn, &SecpClust, &BytespSector, &freeClust, &TotClust)){
-				sprintf(buf, "\n Drive %s has parameters:\n",rpn);
+				sprintf_s(buf, MAXLINE, "\n Drive %s has parameters:\n",rpn);
 				smsg(buf);
-				sprintf(buf, "Sectors per cluster: %u\nBytes per Sector: %u\nFree Clusters: %u\nTotal Clusters: %u\nFree Space: %15u\n",
+				sprintf_s(buf, MAXLINE, "Sectors per cluster: %u\nBytes per Sector: %u\nFree Clusters: %u\nTotal Clusters: %u\nFree Space: %15u\n",
 					SecpClust, BytespSector, freeClust, TotClust, freeClust*SecpClust*BytespSector);
 				smsg(buf);
 			}
@@ -138,7 +138,7 @@ FILE *fd;
 	if( (fd = _popen(ftoop, "rt")) != NULL){	//deschid fisierul nou creat
 		while( !feof(fd) ){
 			mybuf[0]=mybuf[1]=0;
-			fscanf(fd, "%c", mybuf);
+			fscanf_s(fd, "%c", mybuf, MAXLINE);
 			smsg(mybuf);
 
 		}
@@ -149,20 +149,20 @@ FILE *fd;
 }
 void cpuinf(){
 	char mybuf[MAXLINE];
-	sscanf(ftoop, "%s", mybuf);
-	strcpy(mybuf, "C:\\TEMP\\Luci\\gserver\\Debug\\cpuid3.exe");
+	//? sscanf(ftoop, "%s", mybuf);
+	strcpy_s(mybuf, MAXLINE, "C:\\TEMP\\Luci\\gserver\\Debug\\cpuid3.exe");
 	sendtoc(mybuf);
 	return;
 }
 
 void disk_usage(char *primc, char *rest){
 	char mybuf[MAXLINE];
-	sscanf(ftoop, "%s", mybuf);
-		char *tmp;
-		tmp = ftoop + 6;
-		strcpy(mybuf, "dir /s /a /w");
-		strcat(mybuf, primc);
-		strcat(mybuf, rest);
+//?	sscanf(ftoop, "%s", mybuf);
+//?		char *tmp;
+//?		tmp = ftoop + 6;
+		strcpy_s(mybuf, MAXLINE, "dir /s /a /w");
+		strcat_s(mybuf, MAXLINE, primc);
+		strcat_s(mybuf, MAXLINE, rest);
 		sendtoc(mybuf);
 }
 
@@ -171,11 +171,11 @@ void lans_ex(char *comanda, char *parametru){
 	char redar[255];
 	if( acces == 1 ){
 		redar[0] = '\0';
-		strcat(redar, comanda);
-		strcat(redar, " ");
+		strcat_s(redar, 255, comanda);
+		strcat_s(redar, 255, " ");
 		if( strlen(parametru) > 0){
-			strcat(redar, parametru);
-			strcat(redar, " ");
+			strcat_s(redar, 255, parametru);
+			strcat_s(redar, 255, " ");
 		}
 	   sendtoc(redar);
 	}
@@ -190,7 +190,7 @@ DWORD dwUptime;
 int ore = 0, minute = 0;
 float load, f1;
 	GlobalMemoryStatus(&lpmemStat);
-	sprintf(mybuf, "%ld %ld %ld %ld \n", (lpmemStat.dwTotalPhys - lpmemStat.dwAvailPhys)/1000,
+	sprintf_s(mybuf, MAXLINE, "%ld %ld %ld %ld \n", (lpmemStat.dwTotalPhys - lpmemStat.dwAvailPhys)/1000,
 		lpmemStat.dwAvailPhys/1000, (lpmemStat.dwTotalVirtual - lpmemStat.dwAvailVirtual)/1000,
 		lpmemStat.dwAvailVirtual/1000);
 	smsg(mybuf);
@@ -199,7 +199,7 @@ float load, f1;
 	minute = dwUptime/6000 - ore*60;
 	f1 = (float)lpmemStat.dwMemoryLoad ;
 	load = f1 / 100;
-	sprintf(mybuf, "%ld:%ld %f\n", ore, minute, load);
+	sprintf_s(mybuf, MAXLINE, "%ld:%ld %f\n", ore, minute, load);
 	smsg(mybuf);
 	smsg(".e\n");
 }
