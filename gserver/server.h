@@ -10,7 +10,7 @@
 # include <errno.h>
 # include <unistd.h>
 # include <string.h>
-# include <gdbm.h>
+// # include <gdbm.h>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <shadow.h>

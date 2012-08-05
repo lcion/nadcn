@@ -4,7 +4,7 @@
 int	errno;
 
 
-u_short	htons(), ntohs();
+// u_short	htons(), ntohs();
 void fix_string(char *, int);
 void err_sys(const char *fmt, ...);
 u_short	portbase = 0;		/* port base, for non-root servers	*/
