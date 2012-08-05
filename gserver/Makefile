@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -c -g -Wall -o $@
 
 all : server
-	server &
+#	server &
 
 server : $(OBJS)
 	$(CC) -o $@ $(OBJS) -lcrypt
@@ -21,6 +21,6 @@ cryptl.o: ../cript/cryptl.c
 	$(CC) $(CFLAGS) ../cript/cryptl.c
 
 clean :
-	rm -f *.o
+	rm -f *.o *~
 	rm -f server
-	cld
+#	cld

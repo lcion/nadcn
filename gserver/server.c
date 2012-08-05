@@ -176,7 +176,7 @@ va_list ap;
 void wait_for_conection(void){
 
 struct sockaddr_in fsin;	//cererea de la adresa
-int alen;			//de la lungimea adresei
+unsigned int alen;			//de la lungimea adresei
 int tcsock= -1;			//TCP socket for client
 	while(1){
 		int ssock;	//TCP Client socket

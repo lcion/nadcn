@@ -4,6 +4,8 @@
 //				pe retea.
 //
 //
+#include <string.h>
+
 char *cryptl(char *, char *);
 //static long seed = 123;
 
