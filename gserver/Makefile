@@ -1,12 +1,17 @@
 OBJS = ex_dem.o server.o fix_str.o cryptl.o
 CC = gcc
-CFLAGS = -c -g -Wall -o $@
+CFLAGS = -c -Wall
+LDFAGS = -o $@
 
+all : CFLAGS += -o3 -o $@
+all : LDFAGS += -o3 
 all : server
-#	server &
+
+debug : CFLAGS += -DDEBUG -g3 -o $@
+debug : server
 
 server : $(OBJS)
-	$(CC) -o $@ $(OBJS) -lcrypt
+	$(CC) $(LDFAGS) $(OBJS) -lcrypt
 
 ex_dem.o : ex_dem.c
 	$(CC) $(CFLAGS) ex_dem.c
@@ -23,4 +28,3 @@ cryptl.o: ../cript/cryptl.c
 clean :
 	rm -f *.o *~
 	rm -f server
-#	cld
