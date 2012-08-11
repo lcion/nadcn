@@ -1,15 +1,15 @@
 /* A box with two buttons and a string. Simple boxes like this
  */
 
-
+#include <stdlib.h>
 #include "forms.h"
-#include "lhostanduser.h"
+#include "forms/lhostanduser.h"
 
 FD_hostanduser *hauf;
 
 void leave_cback(FL_OBJECT *ob, long user_data){
 	printf("Leave was called, so Bye!\n");
-q	fl_finish();
+	fl_finish();
 	exit(0);
 }
 
@@ -31,7 +31,7 @@ void connect_cback(FL_OBJECT *ob, long user_data){
 }
 
 
-void main(int argc, char *argv[]){
+int main(int argc, char *argv[]){
 
    FL_FORM *form;
    FL_OBJECT *obj;
@@ -48,4 +48,5 @@ void main(int argc, char *argv[]){
   fl_show_form(form,FL_PLACE_MOUSE,FL_TRANSIENT,"LanAdmin");
 
   fl_do_forms();
+  return 0;
 }
