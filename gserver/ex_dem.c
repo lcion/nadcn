@@ -189,16 +189,17 @@ void repgrafst(){
 	FILE *fd;
 	char mb[MAXLINE], sb[MAXLINE];
 	int i = 0;
+	int scRes = 0;
 	mb[0] = 0;
 	if( (fd = popen("/usr/bin/free", "r")) != NULL){	//deschid fisierul nou creat
 		while( !feof(fd) ){
-			fscanf(fd, "%s", sb);
-			if(strcmp(sb, "Mem:") == 0 || strcmp(sb, "Swap:") == 0 ){
-				fscanf(fd, "%s", sb);	//M/S Totala
-				fscanf(fd, "%s", sb);	//M/S Folosit
+			scRes = fscanf(fd, "%s", sb);
+			if(scRes > 3 && ( strcmp(sb, "Mem:") == 0 || strcmp(sb, "Swap:") == 0 ) ){
+				scRes = fscanf(fd, "%s", sb);	//M/S Totala
+				scRes = fscanf(fd, "%s", sb);	//M/S Folosit
 				strcat(sb, " ");
 				strcat(mb, sb);
-				fscanf(fd, "%s", sb);	//M/S liber
+				scRes = fscanf(fd, "%s", sb);	//M/S liber
 				strcat(sb, " ");
 				strcat(mb, sb);
 			}
@@ -209,10 +210,10 @@ void repgrafst(){
 	}
 	mb[0] = 0;
 	if( (fd = popen("/usr/bin/w", "r")) != NULL){	//deschid fisierul nou creat
-		fscanf(fd, "%s", sb);
+		scRes = fscanf(fd, "%s", sb);
 		while( !feof(fd) ){
 			if(strcmp( sb, "up") == 0 || strcmp( sb, "average:") == 0 ){
-				fscanf(fd, "%s", sb);	//timpul de cand a fost pornit
+				scRes = fscanf(fd, "%s", sb);	//timpul de cand a fost pornit
 				i++;
 				if(i == 2){
 					strcat(mb, " ");
@@ -221,8 +222,8 @@ void repgrafst(){
 				}
 				else
 					strcpy(mb, sb);
-				fscanf(fd, "%s", sb);	// ignor
-				fscanf(fd, "%s", sb);	//doua sirurui
+				scRes = fscanf(fd, "%s", sb);	// ignor
+				scRes = fscanf(fd, "%s", sb);	//doua sirurui
 			}
 			if(i > 1){
 				int j  = 0;	//aici trebuie sa trimit un buffer odata
@@ -235,7 +236,7 @@ void repgrafst(){
 					}
 				}
 			}else
-				fscanf(fd, "%s", sb);
+				scRes = fscanf(fd, "%s", sb);
 		}
 		if(fd != NULL)
 			pclose(fd);

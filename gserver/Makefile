@@ -3,8 +3,8 @@ CC = gcc
 CFLAGS = -c -Wall
 LDFAGS = -o $@
 
-all : CFLAGS += -o3 -o $@
-all : LDFAGS += -o3 
+all : CFLAGS += -O3 -o $@
+all : LDFAGS += 
 all : server
 
 debug : CFLAGS += -DDEBUG -g3 -o $@

@@ -64,7 +64,7 @@ char	t1[ROTORSZ];
 char	t2[ROTORSZ];
 char	t3[ROTORSZ];
 char	deck[ROTORSZ];
-char	buf[13], buf1[13];
+char	buf[13], buf1[14];
 	long seed;
 	register int i, n1, n2, nr1, nr2;
 	int secureflg = 1;
