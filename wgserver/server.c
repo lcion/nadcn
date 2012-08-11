@@ -51,6 +51,7 @@ int	qlen;		/* maximum length of the server request queue	*/
 	struct protoent *ppe;	/* pointer to protocol information entry*/
 	struct sockaddr_in sin;	/* an Internet endpoint address		*/
 	int	s, type;	/* socket descriptor and socket type	*/
+	char errBuffer[MAX_PATH];
 
 //	bzero((char *)&sin, sizeof(sin));
 	ZeroMemory((char *)&sin, sizeof(sin));
@@ -76,16 +77,19 @@ int	qlen;		/* maximum length of the server request queue	*/
 
     /* Allocate a socket */
 	s = socket(PF_INET, type, ppe->p_proto);
-	if (s < 0)
-		err_sys("can't create socket: %s\n", sys_errlist[errno]);
+	if (s < 0){
+		strerror_s(errBuffer, MAX_PATH, errno);
+		err_sys("can't create socket: %s\n", errBuffer);
+	}
 
     /* Bind the socket */
-	if (bind(s, (struct sockaddr *)&sin, sizeof(sin)) < 0)
-		err_sys("can't bind to %s port: %s\n", service,
-			sys_errlist[errno]);
+	if (bind(s, (struct sockaddr *)&sin, sizeof(sin)) < 0){
+		strerror_s(errBuffer, MAX_PATH, errno);
+		err_sys("can't bind to port %s: %s\n", service, errBuffer);
+	}
 	if (type == SOCK_STREAM && listen(s, qlen) < 0)
-		err_sys("can't listen on %s port: %s\n", service,
-			sys_errlist[errno]);
+		strerror_s(errBuffer, MAX_PATH, errno);
+		err_sys("can't listen on %s port: %s\n", service, errBuffer);
 	return s;
 }
 
@@ -93,10 +97,15 @@ void err_doit(int errnoflag, const char *fmt, va_list ap){
 int errno_save;
 char buf[MAXLINE];
 	errno_save = errno;
-	vsprintf(buf, fmt, ap);
-	if(errnoflag)
-		sprintf(buf+strlen(buf), ": %s", strerror(errno_save));
-	strcat(buf, "\n");
+	vsprintf_s(buf, MAXLINE, fmt, ap);
+	if(errnoflag){
+		char errBuffer[MAX_PATH];
+		strerror_s(errBuffer, MAX_PATH, errno_save);
+		//sprintf(buf+strlen(buf), ": %s", strerror(errno_save));
+		strcat_s(buf, MAXLINE, ": ");
+		strcat_s(buf, MAXLINE, errBuffer);
+	}
+	strcat_s(buf, MAXLINE, "\n");
 	fflush(stdout);
 	fputs(buf, stderr);
 	fflush(NULL);
