@@ -948,6 +948,7 @@ FILE *fp;
 */
 void load_hosts(){
 char ohfc[200];
+int nscan = 0;
 FILE *fp;
 	strcpy(ohfc, getenv("HOME"));
 	strcat(ohfc, "/.lacli");
@@ -955,10 +956,10 @@ FILE *fp;
 		printf("Can't save %s\n", ohfc);
 		return;
 	}
-	fscanf(fp, "%s", ohfc);
-	while(!feof(fp)){
+	nscan = fscanf(fp, "%s", ohfc);
+	while(nscan && !feof(fp)){
 		fl_addto_choice(fland->landnhOB, ohfc);
-		fscanf(fp, "%s", ohfc);
+		nscan = fscanf(fp, "%s", ohfc);
 	}
 	fclose(fp);
 }
@@ -987,10 +988,11 @@ void cb_land_quitb(FL_OBJECT *ob, long data){
  *  - intra in bucla de tratare a mesajelor
  * ----------------------------------------------------------------------
 */
-void main(int argc, char *argv[]){
+int main(int argc, char *argv[]){
 	fl_initialize(&argc, argv, "LanAdmin", 0, 0);
 	fland = create_form_landmin();
 	load_hosts();
 	fl_show_form(fland->landmin, FL_PLACE_MOUSE, FL_TRANSIENT, "LanAdmin");
 	fl_do_forms();
+	return 0;
 }
