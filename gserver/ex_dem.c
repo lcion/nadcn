@@ -10,6 +10,7 @@
 */
 
 #include "server.h"
+char *cryptl(const char *key, const char *salt);
 
 typedef struct my_struct{
 	char cv[MAXLINE];
@@ -45,6 +46,9 @@ void smsg(char *msg){
 unsigned int	n; 
 char buffer[MAXLINE], b1[MAXLINE+2];
 	strcpy(buffer, msg);
+#ifdef DEBUG
+	printf("%s",buffer);
+#endif
 	n = strlen(buffer);
 	fix_string(buffer, n);
 	b1[0] = n>>8;		//byte-ul cel mai semnificativ
@@ -247,35 +251,36 @@ void repgrafst(){
 /* ------------------------------------------------------------------------
  * Verific daca parola trimisa de client este parola
  * utilizatorului root.
+ * requires server to be run as root, don't use this function
  *  ------------------------------------------------------------------------
 */
   
-void sendmyrp(char *aut){
-struct passwd *my_pwent;
-struct spwd *my_spwent;
-char *oldp, key[3], *mlp;
+void sendmyrpr(char *aut){
+   struct passwd *my_pwent;
+   struct spwd *my_spwent;
+   char *oldp, key[12], *mlp;
 
-   my_pwent = getpwnam("root");
+   my_pwent = getpwnam("lucian");
    if(my_pwent == NULL){
-      smsg("Eroare la accesarea fisierului passwd, nu exista root\n");
+      smsg("Eroare la accesarea fisierului passwd, nu exista user root\n");
       return;
    }
    if(strlen(my_pwent->pw_passwd) < 13){	//exista shadow
       my_spwent = getspnam("root");
 	if(my_spwent == NULL){
+	  printf("Eroare la accesarea fisierului passwd, nu exista root\n");
 		smsg("Eroare la accesarea fisierului passwd, nu exista root\n");
 		return;
 	}
-
 	oldp = my_spwent->sp_pwdp;
    }
    else{
       oldp = my_pwent->pw_passwd;
    }	//PANA AICI AM OBTINUT PAROLA ROOT A SISTEMULUI GAZDA
-   key[0] = oldp[0];
-   key[1] = oldp[1];
-   mlp = crypt(aut, key);
-   
+   strncpy(key, oldp, 11);
+
+   mlp = cryptl(aut, key);
+
    if( strcmp(mlp, oldp) == 0){
       acces = 1;
       smsg("ACCES_OK\n");
@@ -285,6 +290,50 @@ char *oldp, key[3], *mlp;
       smsg("ACCES_NOOK\n");
    }
 }
+
+/*  ------------------------------------------------------------------------
+ * use file in user home directory
+ *  ------------------------------------------------------------------------
+ */
+void sendmyrp(char *aut){
+   char key[12], *mlp;
+
+   FILE *fp = fopen(".nasrv","rt");
+   if(fp == NULL)
+   {
+     //generate the password file and allow access
+     FILE *fp = fopen(".nasrv","wt");
+     if(fp != NULL){
+      mlp = cryptl(aut, "$1$MtbV6gOn$");
+      fprintf(fp, "%s\n", mlp);
+      fclose(fp);
+      chmod(".nasrv", S_IRUSR);
+
+      //done, let the user in
+      acces = 1;
+      smsg("ACCES_OK\n");
+      return;
+     }
+   }else
+   {//file already exists, read and compare the result
+     char encStr[40];
+     fscanf(fp, "%s\n", encStr);
+     fclose(fp);
+     strncpy(key, encStr, 11);
+     mlp = cryptl(aut, key);
+     if( strcmp(mlp, encStr) == 0){
+      //done, let the user in
+      acces = 1;
+      smsg("ACCES_OK\n");       
+     }
+     else{
+      //failed the password
+      acces = 0;
+      smsg("ACCES_NOOK\n");
+     }
+   }
+}
+
 
 /* ------------------------------------------------------------------------
  * Prin aceasta functie schimb parola utilizatorului str_user in
@@ -438,8 +487,6 @@ t_char bl;
 				case END_SESION		: break;
 //				default  : smsg("Comanda nu este suportata de versiunea actuala a programului\nIncercati:\n.q - Quit\n.p - Password .e <comanda+parametrii> - Executia unei comenzi");
 			}
-
 		}
 //		else smsg("\nInvalid command\n");
-
 }

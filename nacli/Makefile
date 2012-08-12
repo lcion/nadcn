@@ -1,7 +1,7 @@
 INCLD = -I/usr/include
 LDIR = -L/usr/X11R6/lib/
 CC = gcc
-XFFLAGS = -lforms -lX11 -lm
+XFFLAGS = -lforms -lX11 -lm -lcrypt
 CFLAGS = -c -Wall -o $@
 
 OBJS = lclient.o lhostanduser.o fclient.o gccommander.o cgpassf.o inpforocc.o landmincp.o fix_str.o cryptl.o

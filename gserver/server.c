@@ -11,13 +11,12 @@ u_short	portbase = 0;		/* port base, for non-root servers	*/
 
 /* ------------------------------------------------------------------------
  * passivesock - aloc si inregistrez un socket server folosind  TCP sau UDP
+ * char	*service;	// serviciul asociat cu protocolul dorit
+ * char	*protocol;	// numele protocolului folosit ("tcp" sau "udp")
+ * int	qlen;		// lungimea cozii de asteptare pentru clienti
  * ------------------------------------------------------------------------
  */
-int
-passivesock( service, protocol, qlen )
-char	*service;	// serviciul asociat cu protocolul dorit
-char	*protocol;	// numele protocolului folosit ("tcp" sau "udp")
-int	qlen;		// lungimea cozii de asteptare pentru clienti
+int passivesock( char *service, char *protocol, int qlen )
 {
 	struct servent	*pse;	// pointer la o entitate cu informati despre serviciu
 	struct protoent *ppe;	// pointer la o entitate cu informati despre protocol
@@ -92,11 +91,7 @@ int passiveTCP(char *service, int qlen){
  * Scriu "n" bytes intr-un descriptor de socket
  */
 
-int
-writen(fd, ptr, nbytes)
-register int	fd;
-register char	*ptr;
-register int	nbytes;
+int writen(register int fd, register char *ptr, register int nbytes)
 {
 	int	nleft, nwritten;
 

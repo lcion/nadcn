@@ -58,12 +58,11 @@ char buffer[MAXLINE], b1[MAXLINE+2];
 
 /* ----------------------------------------------------------------------
  * Apelez functia "connectsock" ce stabileste o conexiune folosind protocolul TCP
+ * host;	 name of host to which connection is desired
+ * service;	 service associated with the desired port
  * ----------------------------------------------------------------------
 */
-int
-connectTCP( host, service )
-char	*host;		/* name of host to which connection is desired	*/
-char	*service;	/* service associated with the desired port	*/
+int connectTCP( char *host, char *service )
 {
 	return connectsock( host, service, "tcp");
 }
