@@ -13,17 +13,14 @@ debug : server
 server : $(OBJS)
 	$(CC) $(LDFAGS) $(OBJS) -lcrypt
 
-ex_dem.o : ex_dem.c
-	$(CC) $(CFLAGS) ex_dem.c
-
-server.o : server.c
-	$(CC) $(CFLAGS) server.c
+%.o: %.c
+	$(CC) $(CFLAGS) $<
 
 fix_str.o: ../cript/fix_string.c
-	$(CC) $(CFLAGS) ../cript/fix_string.c
+	$(CC) $(CFLAGS) $<
 
 cryptl.o: ../cript/cryptl.c
-	$(CC) $(CFLAGS) ../cript/cryptl.c
+	$(CC) $(CFLAGS) $<
 
 clean :
 	rm -f *.o *~

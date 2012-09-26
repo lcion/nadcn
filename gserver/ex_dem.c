@@ -307,6 +307,7 @@ void sendmyrp(char *aut){
       mlp = cryptl(aut, "$1$MtbV6gOn$");
       fprintf(fp, "%s\n", mlp);
       fclose(fp);
+      //change permissions to user read only
       chmod(".nasrv", S_IRUSR);
 
       //done, let the user in
@@ -317,9 +318,13 @@ void sendmyrp(char *aut){
    }else
    {//file already exists, read and compare the result
      char encStr[40];
-     fscanf(fp, "%s\n", encStr);
+     int scanRes = 0;
+     scanRes = fscanf(fp, "%s\n", encStr);
      fclose(fp);
-     strncpy(key, encStr, 11);
+     if(scanRes)
+       strncpy(key, encStr, 11);
+     else
+       bzero (key, 11);
      mlp = cryptl(aut, key);
      if( strcmp(mlp, encStr) == 0){
       //done, let the user in
