@@ -5,3 +5,8 @@ This application is used when a user needs to monitor multiple computers running
 The small server (slave) applications are running on the network computers that are required to be monitored. One server instance will be run on each workstation on the network.
 
 The client (Multi Master) application can connect to one or more server on the network, looking for status (ex disk usage) and sending commands (ex shutdown).
+
+Use kdevelop / gnu command line to build the linux (kubuntu) server and client
+Use visual studio express 2012 for windows Desktop to build the windows server
+The project is a C client server application running in linux using networking and linux X11 and forms libraries.
+The application was originally designed for visualising state on multiple pc on the same time.
